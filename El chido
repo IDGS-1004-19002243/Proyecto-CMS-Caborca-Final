@@ -1,0 +1,201 @@
+# PLAN DE DESPLIEGUE DEFINITIVO (Windows Server 2012 R2)
+
+ITCab0rc4C1H9N
+**Proyecto:** Caborca Boots CMS y Portafolio Web
+**Arquitectura:** API REST en .NET 9 + Frontends en React 19 + SQL Server + IIS
+
+Este documento ha sido simplificado para contener única y exclusivamente los pasos directos, limpios y definitivos para montar el proyecto en el servidor real.
+
+---
+
+## 1. PREPARATIVOS EN EL SERVIDOR (Una sola vez)
+
+Conéctate por Escritorio Remoto (RDP) al Windows Server 2012 R2 y realiza esto:
+
+1. **Instalar el Módulo de Reescritura para IIS (URL Rewrite):**
+   - Descarga: `https://www.iis.net/downloads/microsoft/url-rewrite`
+   - Instala el archivo `.msi` (Siguiente > Siguiente > Finalizar).
+
+2. **Instalar librerías de C++ (requeridas por .NET 9):**
+   - Descarga: `https://aka.ms/vs/17/release/vc_redist.x64.exe`
+   - Instálalo y dale Aceptar.
+
+3. **Crear las carpetas físicas donde vivirá el sistema:**
+   Abre una consola CMD como administrador y pega:
+
+   ```cmd
+   mkdir C:\CaborcaAPI
+   mkdir C:\CaborcaAPI\wwwroot\uploads
+   mkdir C:\inetpub\portafolio
+   mkdir C:\inetpub\cms
+   ```
+
+4. **Otorgar Permisos de Escritura para las Imágenes:**
+   En la misma consola:
+
+   ```cmd
+   icacls "C:\CaborcaAPI\wwwroot\uploads" /grant "IIS_IUSRS:(OI)(CI)F" /T
+   ```
+
+---
+
+## 2. COMPILAR EL PROYECTO (En tu computadora Win 11)
+
+Antes de subir cosas al servidor, debes generar la versión "Release" en tu computadora local.
+
+### Paso 2.1 - Compilar la API (Backend C#)
+
+Abre PowerShell en la carpeta de la API (`.../CMS_Caborca_API`) y ejecuta:
+
+```powershell
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o "C:\Deploy_Caborca\API"
+```
+
+### Paso 2.2 - Inyectar IPs en el Frontend (React)
+
+Abre la carpeta de código de Portafolio y CMS. En cada uno, busca o crea el archivo llamado `.env.production` y asegúrate que tenga la IP REAL del Servidor Windows Server.
+Ejemplo:
+
+```env
+VITE_API_URL=http://DOMINIO_O_IP_PUBLICA:5000/api
+```
+
+*(Cambia esa IP por la IP real del servidor en tu red).*
+
+### Paso 2.3 - Compilar los Frontends
+
+En tu computadora, abre terminales en el Portafolio y el CMS, y ejecuta en cada uno de ellos:
+
+```powershell
+npm run build
+```
+
+1. Copia todos los archivos dentro de la carpeta `dist/` del Portafolio a tu nueva carpeta temporal `C:\Deploy_Caborca\Portafolio`.
+2. Copia todos los archivos dentro de la carpeta `dist/` del CMS a `C:\Deploy_Caborca\CMS`.
+
+---
+
+## 3. TRANSFERENCIA DE ARCHIVOS AL SERVIDOR (Por RDP)
+
+La principal regla de este proyecto es que **nunca instalas Visual Studio ni código fuente en el servidor**. Tú compilas "el platillo" en tu laptop y lo sirves finalizado en el servidor mediante Escritorio Remoto.
+
+1. Selecciona la carpeta `C:\Deploy_Caborca` completa en tu PC Windows 11 y presiona **Ctrl + C** (Copiar).
+2. Abre la aplicación de **Conexión a Escritorio Remoto** (RDP) y conéctate al Servidor Windows 2012 R2.
+3. Al entrar al servidor remoto, ve al Escritorio y presiona **Ctrl + V** (Pegar) para que la carpeta pase a través de la red.
+
+Una vez adentro del Servidor, distribuye los archivos hacia los cascarones:
+
+- Mueve todo lo de `C:\Deploy_Caborca\API` hacia `C:\CaborcaAPI`
+- Mueve todo lo de `C:\Deploy_Caborca\Portafolio` hacia `C:\inetpub\portafolio`
+- Mueve todo lo de `C:\Deploy_Caborca\CMS` hacia `C:\inetpub\cms`
+
+### 3.1 Conexión Mágica Oculta de SQL Server
+
+Si el equipo de IT **NO te dio un usuario ni contraseña explícita** para SQL Server, debes asegurarte de cómo está tu servidor:
+
+1. Presiona `Win + R` en el Servidor Remoto, escribe `services.msc` y oprime Enter.
+2. Busca en la lista el servicio que dice **SQL Server (MSSQLSERVER)** o **SQL Server (SQLEXPRESS)**.
+
+**Si SÍ Viste el Servicio de SQL:**
+Significa que puedes conectarte ocultamente usando los poderes de Administrador de Windows. Abre el archivo `C:\CaborcaAPI\appsettings.Production.json` en el servidor y ajusta obligatoriamente la regla de conexión reemplazando credenciales textuales por esta sola línea confiable:
+
+```json
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=BDCaborca;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+```
+
+**Si NO Encontraste NINGÚN Servicio de SQL Server:**
+Tienes dos opciones:
+
+- **Opción A (Base de Datos Externa con IT):** Hablar con el equipo IT y pedirles la *Dirección IP Remota y la Contraseña* donde está hospedada la empresa para la base de datos.
+  - **Nota de Configuración:** Inyecta esos datos en tu `appsettings.Production.json`. Si la IP tiene un nombre de instancia (ej. `192.168.20.237\principal`), asegúrate de poner **doble barra invertida `\\`** en el archivo JSON para que no de error sintáctico.
+  - **Solución al Error 26 (Bloqueo de Red):** Si al encender la API obtienes el error en rojo _"Error 26 - Error Locating Server/Instance Specified"_, significa que tu código está perfecto pero el servidor de IT te está bloqueando. Debes decirle textualmente a IT: _"Mi API está lista, pero su servidor SQL me rechaza. Verifiquen que la BD 'BDCaborca' existe, que mi usuario tiene permisos, y que su Firewall tiene abierto el puerto 1433 (TCP) para aceptar conexiones remotas hacia su instancia"_.
+- **Opción B:** Si tú eres el único responsable del servidor, descarga e instala **Microsoft SQL Server 2017 Express** (Versiones 2019 o superiores no son soportadas por Windows Server 2012 R2). La propia instalación te validará.
+
+> ⚠️ **IMPORTANTE:** En ese mismo archivo `appsettings.Production.json` no te olvides de escribir también tus 16 letras secretas correspondientes a la Contraseña de Aplicación de cuenta Gmail (la llave SMTP) para que la página lance correos.
+
+---
+
+## 4. INICIAR LA API COMO SERVICIO DE WINDOWS
+
+En el servidor, abre CMD como Administrador y ejecuta literalmente estas 5 líneas una por una:
+
+```cmd
+sc.exe create "CMS_Caborca_API" binPath= "C:\CMSCaborca\CaborcaAPI\CMS_Caborca_API.exe" start= auto DisplayName= "Proyecto Caborca CMS"
+sc.exe description "CMS_Caborca_API" "API REST"
+reg add "HKLM\SYSTEM\CurrentControlSet\Services\CMS_Caborca_API" /v Environment /t REG_MULTI_SZ /d "ASPNETCORE_ENVIRONMENT=Production" /f
+sc.exe failure "CMS_Caborca_API" reset= 86400 actions= restart/5000/restart/10000/restart/30000
+sc.exe start "CMS_Caborca_API"
+```
+
+¡Listo! La API ya está conectada a la base de datos y corriendo a un 100% de fondo.
+
+---
+
+## 5. CONFIGURAR IIS PARA LOS FRONTENDS (Páginas Visuales)
+
+### 5.1 Crear archivo `web.config` (Repara Rutas)
+
+Abre el block de notas, pega este texto idéntico y guárdalo como `web.config` y colócalo directamente dentro de `C:\inetpub\portafolio` Y TAMBIÉN en `C:\inetpub\cms` (el mismo archivo va en ambas carpetas):
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.webServer>
+    <rewrite>
+      <rules>
+        <rule name="React" stopProcessing="true">
+          <match url=".*" />
+          <conditions logicalGrouping="MatchAll">
+            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+          </conditions>
+          <action type="Rewrite" url="/index.html" />
+        </rule>
+      </rules>
+    </rewrite>
+    <staticContent>
+      <remove fileExtension=".webp" />
+      <mimeMap fileExtension=".webp" mimeType="image/webp" />
+    </staticContent>
+  </system.webServer>
+</configuration>
+```
+
+### 5.2 Crear un Pool de Recursos y los Sitios Webs en IIS
+
+Como el servidor ya tiene múltiples páginas vitales en funcionamiento, **por seguridad NUNCA debes mezclar tus aplicaciones con el `DefaultAppPool`**. Vamos a aislar nuestro proyecto.
+
+Abre la consola de "Administrador de IIS" (IIS Manager) en el servidor:
+
+**A. Crear un Entorno Aislado (Application Pool)**
+- Ve a la sección **Application Pools** (Grupos de Aplicaciones) en el menú izquierdo.
+- Clic derecho -> **Add Application Pool...**
+- Name: `CaborcaAppPool`
+- .NET CLR Version: `No Managed Code` (Elegimos esto porque IIS solo servirá React estático).
+- Dale a OK.
+
+**B. Sitio Web 1: Portafolio Público**
+- Clic derecho en 'Sites' -> Add Website.
+- Site Name: `PortafolioCaborca`
+- Application Pool: Clic en 'Select...' y elige **`CaborcaAppPool`**
+- Physical Path: `C:\inetpub\portafolio`
+- Binding Port: `8089`
+
+**C. Sitio Web 2: Sistema CMS Administrador**
+- Clic derecho en 'Sites' -> Add Website.
+- Site Name: `CMSAdminCaborca`
+- Application Pool: Clic en 'Select...' y elige **`CaborcaAppPool`**
+- Physical Path: `C:\inetpub\cms`
+- Binding Port: `8090`
+
+Abre los puertos en el cortafuegos de Windows Server ejecutando esto en el bloque CMD del servidor:
+
+```cmd
+netsh advfirewall firewall add rule name="CaborcaPortafolio HTTP" protocol=TCP dir=in localport=8089 action=allow
+netsh advfirewall firewall add rule name="CaborcaCMS HTTP" protocol=TCP dir=in localport=8090 action=allow
+netsh advfirewall firewall add rule name="CaborcaAPI HTTP" protocol=TCP dir=in localport=5000 action=allow
+```
+
+¡Felicidades! Todo el sistema está permanentemente en línea para el mundo.

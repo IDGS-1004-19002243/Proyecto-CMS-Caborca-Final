@@ -1,0 +1,513 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Aleo', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Patua One', ui-serif, Georgia, serif;
+  --font-patua: 'Patua One', ui-serif, Georgia, serif;
+  --font-playfair: 'Patua One', ui-serif, Georgia, serif;
+}
+
+@font-face {
+  font-family: 'Aleo';
+  src: url('/fonts/Aleo-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Aleo';
+  src: url('/fonts/Aleo-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Patua One';
+  src: url('/fonts/PatuaOne-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ================================================
+   ESTILOS BASE - Contrarrestar Preflight de Tailwind
+   ================================================ */
+
+/* Aplicar estilos base después del reset de Tailwind */
+@layer base {
+
+  /* Tipografía base */
+  html {
+    font-family: 'Aleo', system-ui, sans-serif;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'Aleo', system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #333333;
+    background-color: #E8DCC4;
+    min-height: 100vh;
+  }
+
+  /* Encabezados - Restaurar estilos */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5em;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+  }
+
+  h5 {
+    font-size: 1.125rem;
+  }
+
+  h6 {
+    font-size: 1rem;
+  }
+
+  /* Párrafos */
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  /* Links */
+  a {
+    color: #9B8674;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: #000000;
+  }
+
+  /* Formularios - Estilos base para inputs */
+  input,
+  textarea,
+  select {
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: white;
+    color: #333333;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: #9B8674;
+    box-shadow: 0 0 0 3px rgba(155, 134, 116, 0.15);
+  }
+
+  /* Botones base */
+  button {
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* Labels */
+  label {
+    font-weight: 500;
+    color: #374151;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Listas */
+  ul,
+  ol {
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Tablas */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 600;
+  }
+
+  /* Código */
+  code {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.875em;
+    padding: 0.125rem 0.375rem;
+    background-color: #f3f4f6;
+    border-radius: 0.25rem;
+  }
+
+  /* Imágenes */
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+/* ================================================
+   COMPONENTES PERSONALIZADOS
+   ================================================ */
+
+@layer components {
+
+  /* Tipografía Playfair Display */
+  .font-playfair {
+    font-family: 'Patua One', Georgia, serif;
+  }
+
+  .font-patua {
+    font-family: 'Patua One', Georgia, serif;
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+  }
+
+  /* Botones primarios */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #9B8674;
+    color: white;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: #000000;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* Botones secundarios */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #E8DCC4;
+    color: #9B8674;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: #9B8674;
+    color: white;
+  }
+
+  /* Form inputs mejorados */
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background-color: white;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .form-input:focus {
+    border-color: #9B8674;
+    box-shadow: 0 0 0 4px rgba(155, 134, 116, 0.1);
+  }
+
+  /* Colores verdes de la paleta (sustentabilidad) */
+  :root {
+    --caborca-verde: #16A34A;
+    /* similar a green-600 */
+    --caborca-verde-dark: #15803D;
+    /* dark variant */
+    --caborca-verde-light: rgba(22, 163, 74, 0.08);
+  }
+
+  /* Utilidades de color verde (compatibles con las usadas en Portafolio) */
+  .text-caborca-verde {
+    color: var(--caborca-verde) !important;
+  }
+
+  .bg-caborca-verde {
+    background-color: var(--caborca-verde) !important;
+  }
+
+  .bg-caborca-verde-light {
+    background-color: var(--caborca-verde-light) !important;
+  }
+
+  .border-caborca-verde {
+    border-color: var(--caborca-verde) !important;
+  }
+
+  /* Hover helpers replicando la sintaxis de Tailwind (clases con colon) */
+  .hover\:bg-caborca-verde:hover {
+    background-color: var(--caborca-verde) !important;
+  }
+
+  .hover\:bg-caborca-verde-dark:hover {
+    background-color: var(--caborca-verde-dark) !important;
+  }
+
+  .form-input::placeholder {
+    color: #9ca3af;
+  }
+}
+
+/* ================================================
+   UTILIDADES PERSONALIZADAS
+   ================================================ */
+
+@layer utilities {
+
+  /* Colores de texto Caborca */
+  .text-caborca-cafe {
+    color: #9B8674;
+  }
+
+  .text-caborca-negro {
+    color: #000000;
+  }
+
+  .text-caborca-arena {
+    color: #D2B48C;
+  }
+
+  /* Fondos Caborca */
+  .bg-caborca-cafe {
+    background-color: #9B8674;
+  }
+
+  .bg-caborca-negro {
+    background-color: #000000;
+  }
+
+  .bg-caborca-beige-suave {
+    background-color: #E8DCC4;
+  }
+
+  .bg-caborca-arena {
+    background-color: #D2B48C;
+  }
+
+  /* Animación fadeIn */
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  /* Focus ring personalizado */
+  .focus-ring-caborca:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(155, 134, 116, 0.3);
+  }
+}
+
+/* ================================================
+   ANIMACIONES
+   ================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: 80px;
+    margin-bottom: 0.5rem;
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+    max-height: 0;
+    margin-bottom: 0;
+  }
+}
+
+.animate-toast-in {
+  animation: toastIn 0.3s ease-out forwards;
+}
+
+.animate-toast-out {
+  animation: toastOut 0.3s ease-in forwards;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ================================================
+   SCROLLBAR PERSONALIZADO
+   ================================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E8DCC4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9B8674;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8A7663;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9B8674 #E8DCC4;
+}
+
+/* ================================================
+   ESTILOS ESPECÍFICOS DEL LOGIN
+   ================================================ */
+
+/* Asegurar que el contenedor del login ocupe toda la pantalla */
+#root {
+  min-height: 100vh;
+}
+
+/* Mejoras para inputs en el login */
+.login-input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background-color: white;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: all 0.2s ease;
+}
+
+.login-input:focus {
+  border-color: #9B8674;
+  box-shadow: 0 0 0 4px rgba(155, 134, 116, 0.1);
+  outline: none;
+}
+
+.login-input::placeholder {
+  color: #9ca3af;
+}
+/* FIX VARIABLE FONT HOLLOW BUG ON WINDOWS CHROME */
+span.tracking-widest, span.tracking-wider, p.tracking-widest, p.tracking-wider, a.tracking-widest, a.tracking-wider {
+    font-family: system-ui, -apple-system, sans-serif !important;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0 !important;
+}
