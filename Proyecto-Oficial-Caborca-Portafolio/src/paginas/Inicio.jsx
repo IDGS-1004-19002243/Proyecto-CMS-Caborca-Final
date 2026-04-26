@@ -729,30 +729,30 @@ const Inicio = () => {
 
                 {/* 7. SUSTAINABILITY BANNER SECTION */}
                 <section className="relative overflow-hidden">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                         {/* Left Side - Image */}
-                        <div className="relative aspect-3/2 w-full">
+                        <div className="relative w-full h-full min-h-[400px]">
                             <img
                                 src={sustentabilidad.imagenUrl}
                                 alt="Sustentabilidad Caborca"
-                                className="w-full h-full object-cover"
+                                className="absolute inset-0 w-full h-full object-cover"
                                 onError={(e) => { e.target.src = 'https://blocks.astratic.com/img/general-img-landscape.png'; }}
                             />
-                            <div className="absolute inset-0 bg-linear-to-r from-[#332B1E]/90 to-[#332B1E]/30"></div>
-                            <div className="absolute inset-0 flex items-center justify-center md:justify-start px-8 md:px-12">
-                                <div className="text-caborca-beige-fuerte max-w-md">
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#332B1E]/95 to-[#332B1E]/50"></div>
+                            <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-12 py-12">
+                                <div className="text-white max-w-md">
                                     <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-12 h-12 bg-caborca-beige-fuerte rounded-full flex items-center justify-center" style={{ color: '#fff' }}>
+                                        <div className="w-12 h-12 bg-caborca-beige-fuerte rounded-full flex items-center justify-center text-white">
                                             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>
                                         </div>
-                                        <span className="text-sm font-semibold text-white tracking-wider">{sustentabilidad.badge}</span>
+                                        <span className="text-sm font-semibold tracking-wider drop-shadow-md">{sustentabilidad.badge}</span>
                                     </div>
-                                    <h2 className="text-4xl md:text-5xl font-serif mb-3 leading-tight text-white">
+                                    <h2 className="text-4xl md:text-5xl font-serif mb-4 leading-tight drop-shadow-md">
                                         {sustentabilidad.titulo}
                                     </h2>
-                                    <p className="text-base md:text-lg mb-6 text-gray-200 leading-relaxed">
+                                    <p className="text-base md:text-lg mb-6 text-gray-200 leading-relaxed drop-shadow-md">
                                         {sustentabilidad.descripcion}
                                     </p>
                                 </div>
@@ -760,7 +760,7 @@ const Inicio = () => {
                         </div>
 
                         {/* Right Side - Content */}
-                        <div className="bg-caborca-beige-home p-8 md:p-12 flex flex-col justify-center" style={{ backgroundColor: '#ECE7DF' }}>
+                        <div className="bg-caborca-beige-home p-8 md:p-12 flex flex-col justify-center h-full" style={{ backgroundColor: '#ECE7DF' }}>
                             <div className="max-w-lg mx-auto">
                                 <h3 className="text-xl sm:text-2xl md:text-4xl font-serif text-caborca-beige-fuerte font-bold mb-6">
                                     {sustentabilidad.tituloDerecho}
