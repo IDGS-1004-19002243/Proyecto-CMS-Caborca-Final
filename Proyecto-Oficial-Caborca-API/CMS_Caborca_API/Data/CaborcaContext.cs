@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using CMS_Caborca_API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +56,24 @@ public partial class CaborcaContext : DbContext
         modelBuilder.Entity<Contenido_Pagina>()
             .HasIndex(c => new { c.Nombre_Pagina, c.Clave_Identificadora })
             .IsUnique();
+
+        // SEMBRADO DE DATOS (Data Seeding): Creación de usuarios por defecto
+        modelBuilder.Entity<Usuario_Administrador>().HasData(
+            new Usuario_Administrador 
+            { 
+                Id = 1, 
+                Usuario = "admin", 
+                PasswordHash = "adminCaborc@01", 
+                Rol = "SuperAdmin" // El Rol SuperAdmin es el único autorizado para cambiar contraseñas
+            },
+            new Usuario_Administrador 
+            { 
+                Id = 2, 
+                Usuario = "editor", 
+                PasswordHash = "editorCaborc@01", 
+                Rol = "Editor" 
+            }
+        );
 
         OnModelCreatingPartial(modelBuilder);
     }
