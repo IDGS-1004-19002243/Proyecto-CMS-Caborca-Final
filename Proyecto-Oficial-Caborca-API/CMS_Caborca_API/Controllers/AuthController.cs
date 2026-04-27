@@ -64,7 +64,7 @@ namespace CMS_Caborca_API.Controllers
 
         /// <summary>
         /// Obtiene la lista de usuarios administradores configurados en el sistema.
-        /// Solo accesible para cuentas con rol de SuperAdmin.
+        /// Solo accesible para cuentas con rol de Admin.
         /// </summary>
         [HttpGet("users")]
         [Microsoft.AspNetCore.Authorization.Authorize]
@@ -76,8 +76,8 @@ namespace CMS_Caborca_API.Controllers
             var user = await _context.Usuarios_Administradores.FirstOrDefaultAsync(u => u.Usuario == username);
             if (user == null) return NotFound("Usuario no encontrado.");
 
-            // Verificación de privilegios elevados (El rol Admin o SuperAdmin pueden ver usuarios)
-            bool isAdmin = user.Rol == "Admin" || user.Rol == "SuperAdmin" || user.Usuario.ToLower() == "admin";
+            // Verificación de privilegios elevados (El rol Admin puede ver usuarios)
+            bool isAdmin = user.Rol == "Admin" || user.Usuario.ToLower() == "admin";
             if (!isAdmin) return StatusCode(403, "No autorizado.");
 
             var users = await _context.Usuarios_Administradores
@@ -88,7 +88,7 @@ namespace CMS_Caborca_API.Controllers
         }
 
         /// <summary>
-        /// Realiza el cambio de contraseña para el usuario actual o para un tercero si se tiene rol SuperAdmin.
+        /// Realiza el cambio de contraseña para el usuario actual o para un tercero si se tiene rol Admin.
         /// </summary>
         [HttpPost("change-password")]
         [Microsoft.AspNetCore.Authorization.Authorize]
@@ -103,7 +103,7 @@ namespace CMS_Caborca_API.Controllers
             if (adminUser == null) return NotFound("Usuario no encontrado.");
 
             // Permitir al rol Admin gestionar contraseñas
-            bool isAdmin = adminUser.Rol == "Admin" || adminUser.Rol == "SuperAdmin" || adminUser.Usuario.ToLower() == "admin";
+            bool isAdmin = adminUser.Rol == "Admin" || adminUser.Usuario.ToLower() == "admin";
             if (!isAdmin)
             {
                 return StatusCode(403, "Solo el rol Admin puede cambiar contraseñas de otros usuarios.");

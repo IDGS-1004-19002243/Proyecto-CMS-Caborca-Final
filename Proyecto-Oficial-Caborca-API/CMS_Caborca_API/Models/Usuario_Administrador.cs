@@ -26,7 +26,7 @@ namespace CMS_Caborca_API.Models
 
         [Required]
         [MaxLength(50)]
-        /// <summary>Rol de autorización (Admin, Editor, SuperAdmin, etc.).</summary>
+        /// <summary>Rol de autorización (Admin, Editor, etc.).</summary>
         public string Rol { get; set; } = "Admin"; // Ej: "Admin", "Editor"
 
         /// <summary>Token de la última sesión registrada.</summary>
