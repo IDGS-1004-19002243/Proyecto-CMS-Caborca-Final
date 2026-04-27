@@ -64,7 +64,7 @@ public partial class CaborcaContext : DbContext
                 Id = 1, 
                 Usuario = "admin", 
                 PasswordHash = "adminCaborc@01", 
-                Rol = "SuperAdmin" // El Rol SuperAdmin es el único autorizado para cambiar contraseñas
+                Rol = "Admin" // El Rol Admin es el autorizado para cambiar contraseñas
             },
             new Usuario_Administrador 
             { 

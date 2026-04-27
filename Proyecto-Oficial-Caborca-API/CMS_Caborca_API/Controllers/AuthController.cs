@@ -76,9 +76,9 @@ namespace CMS_Caborca_API.Controllers
             var user = await _context.Usuarios_Administradores.FirstOrDefaultAsync(u => u.Usuario == username);
             if (user == null) return NotFound("Usuario no encontrado.");
 
-            // Verificación de privilegios elevados
-            bool isSuperAdmin = user.Rol == "SuperAdmin" || user.Usuario.ToLower() == "superadmin";
-            if (!isSuperAdmin) return StatusCode(403, "No autorizado.");
+            // Verificación de privilegios elevados (El rol Admin o SuperAdmin pueden ver usuarios)
+            bool isAdmin = user.Rol == "Admin" || user.Rol == "SuperAdmin" || user.Usuario.ToLower() == "admin";
+            if (!isAdmin) return StatusCode(403, "No autorizado.");
 
             var users = await _context.Usuarios_Administradores
                 .Select(u => new { u.Usuario, u.Rol })
@@ -102,11 +102,11 @@ namespace CMS_Caborca_API.Controllers
 
             if (adminUser == null) return NotFound("Usuario no encontrado.");
 
-            // Solo el SuperAdmin tiene permitido gestionar contraseñas a través de este endpoint
-            bool isSuperAdmin = adminUser.Rol == "SuperAdmin" || adminUser.Usuario.ToLower() == "superadmin";
-            if (!isSuperAdmin)
+            // Permitir al rol Admin gestionar contraseñas
+            bool isAdmin = adminUser.Rol == "Admin" || adminUser.Rol == "SuperAdmin" || adminUser.Usuario.ToLower() == "admin";
+            if (!isAdmin)
             {
-                return StatusCode(403, "Solo el SuperAdmin puede cambiar la contraseña.");
+                return StatusCode(403, "Solo el rol Admin puede cambiar contraseñas de otros usuarios.");
             }
 
             if (adminUser.PasswordHash != request.CurrentPassword)
